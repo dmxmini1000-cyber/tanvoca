@@ -1,0 +1,917 @@
+
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#f5f5f7">
+<title>Tấn English Daily Vocabulary</title>
+<style>
+:root {
+  --bg:#f5f5f7; --card:#fff; --text:#202124; --muted:#747782;
+  --blue:#1677ff; --green:#16845b; --border:#e8e9ed;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+button,input,select{font:inherit}
+button{cursor:pointer}
+.wrap{max-width:900px;margin:auto;padding:24px 16px 50px}
+header{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:24px}
+.brand{font-size:13px;color:var(--muted)}
+h1{font-size:clamp(24px,5vw,34px);letter-spacing:-1px;margin:5px 0}
+h2{font-size:18px;margin:0 0 14px}
+.sub{color:var(--muted);font-size:14px}
+.pill{border:1px solid var(--border);background:#fff;border-radius:20px;padding:8px 12px;font-size:12px}
+.card{background:var(--card);border:1px solid rgba(0,0,0,.035);border-radius:24px;
+  padding:22px;margin-bottom:16px;box-shadow:0 5px 24px rgba(20,25,40,.035)}
+.label{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:1px}
+.word{font-size:clamp(32px,8vw,48px);letter-spacing:-1.5px;font-weight:750;margin:10px 0 4px}
+.ipa{color:var(--muted);font-size:16px;margin:8px 0}
+.meaning{font-size:21px;font-weight:600;margin:12px 0}
+.example{line-height:1.65;margin:8px 0}
+.translation{color:var(--muted);font-size:14px}
+.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:18px}
+.btn{border:0;border-radius:14px;padding:12px 16px;background:#f0f1f5;color:var(--text)}
+.btn.primary{background:var(--blue);color:white}
+.btn.success{background:#e6f6ef;color:#147b54}
+.btn:disabled{opacity:.5;cursor:default}
+.stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.stat{background:#f7f8fa;border-radius:16px;padding:14px}
+.stat strong{font-size:24px;display:block}
+.stat span{font-size:12px;color:var(--muted)}
+.progress{height:8px;background:#eceef2;border-radius:10px;overflow:hidden;margin-top:12px}
+.progress div{height:100%;background:var(--green);width:0;transition:width .2s}
+.searchrow{display:flex;gap:8px;margin-bottom:12px}
+input,select{min-width:0;border:1px solid var(--border);background:#fff;border-radius:13px;padding:12px;width:100%;outline:none}
+input:focus,select:focus{border-color:var(--blue)}
+.list{display:grid;gap:8px}
+.item{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:13px;
+  border:1px solid var(--border);border-radius:15px;background:#fff}
+.item-main{min-width:0}
+.item-word{font-weight:650}
+.item-meaning{font-size:13px;color:var(--muted);margin-top:4px}
+.item-actions{display:flex;gap:6px;flex-shrink:0}
+.small{padding:8px 10px;border-radius:10px;border:0;background:#f0f1f5}
+small,.foot{color:var(--muted)}
+.hidden{display:none!important}
+.notice{font-size:12px;color:var(--muted);line-height:1.6}
+footer{text-align:center;font-size:12px;color:var(--muted);padding:15px}
+@media(max-width:560px){
+ .wrap{padding:18px 12px 35px}
+ .card{padding:18px;border-radius:20px}
+ .stats{gap:7px}
+ .stat{padding:11px}
+ .stat strong{font-size:21px}
+ .searchrow{flex-direction:column}
+ .item{align-items:flex-start}
+ .item-actions{flex-direction:column}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div>
+      <div class="brand">YOUR DAILY ENGLISH HABIT</div>
+      <h1>Tấn English</h1>
+      <div class="sub">Mỗi ngày một từ mới · B2 · American English</div>
+    </div>
+    <span class="pill">🇺🇸 US English</span>
+  </header>
+
+  <section class="card">
+    <div class="label" id="dayLabel">TỪ VỰNG HÔM NAY</div>
+    <div class="word" id="word">Loading...</div>
+    <div class="ipa" id="ipa">Đang tải phiên âm...</div>
+    <div class="meaning" id="meaning"></div>
+    <div class="sub" id="pos"></div>
+    <hr style="border:0;border-top:1px solid var(--border);margin:18px 0">
+    <div class="label">Example</div>
+    <p class="example" id="example"></p>
+    <p class="translation" id="exampleVi"></p>
+    <div class="actions">
+      <button class="btn primary" id="speakBtn">🔊 Nghe phát âm</button>
+      <button class="btn" id="learnBtn">✓ Đánh dấu đã học</button>
+      <button class="btn" id="saveBtn">☆ Lưu ôn tập</button>
+    </div>
+    <p class="notice" id="dictionaryStatus"></p>
+  </section>
+
+  <section class="card">
+    <h2>Tiến độ học tập</h2>
+    <div class="stats">
+      <div class="stat"><strong id="learnedCount">0</strong><span>Từ đã học</span></div>
+      <div class="stat"><strong id="savedCount">0</strong><span>Từ cần ôn</span></div>
+      <div class="stat"><strong id="totalCount">0</strong><span>Từ trong kho</span></div>
+    </div>
+    <div class="progress"><div id="progressBar"></div></div>
+    <p class="notice" id="progressText"></p>
+  </section>
+
+  <section class="card">
+    <h2>Kho từ vựng</h2>
+    <div class="searchrow">
+      <input id="search" placeholder="Tìm từ tiếng Anh hoặc nghĩa tiếng Việt...">
+      <select id="filter">
+        <option value="all">Tất cả từ</option>
+        <option value="unlearned">Chưa học</option>
+        <option value="learned">Đã học</option>
+        <option value="saved">Đang lưu ôn tập</option>
+      </select>
+    </div>
+    <div class="list" id="wordList"></div>
+    <button class="btn" id="moreBtn" style="width:100%;margin-top:12px">Xem thêm</button>
+    <p class="notice">Danh sách từ được sắp theo thứ tự cố định. Ngày mới sẽ tự chọn từ tiếp theo theo ngày trong năm.</p>
+  </section>
+
+  <section class="card">
+    <h2>Sao lưu dữ liệu</h2>
+    <p class="notice">Tiến độ được lưu trong trình duyệt của thiết bị này. Nếu đổi trình duyệt hoặc xóa dữ liệu web, tiến độ có thể mất.</p>
+    <div class="actions">
+      <button class="btn" id="exportBtn">Xuất bản sao lưu</button>
+      <button class="btn" id="importBtn">Nhập bản sao lưu</button>
+      <input id="importFile" type="file" accept="application/json" class="hidden">
+    </div>
+  </section>
+
+  <footer>Tấn English Daily Vocabulary · Học một chút mỗi ngày</footer>
+</div>
+
+<script>
+/*
+ * Kho từ vựng nền.
+ * Định dạng mỗi dòng: từ tiếng Anh | nghĩa tiếng Việt | loại từ
+ * IPA và ví dụ sẽ được truy vấn từ Free Dictionary API khi có Internet.
+ */
+const RAW = `
+abandon|từ bỏ, bỏ rơi|verb
+ability|khả năng|noun
+able|có khả năng|adjective
+abroad|ở nước ngoài|adverb
+absence|sự vắng mặt|noun
+absolute|tuyệt đối|adjective
+absorb|hấp thụ, tiếp thu|verb
+abstract|trừu tượng|adjective
+academic|thuộc học thuật|adjective
+accept|chấp nhận|verb
+access|quyền truy cập, tiếp cận|noun
+accommodation|chỗ ở|noun
+accompany|đi cùng|verb
+accomplish|hoàn thành|verb
+account|tài khoản, bản tường thuật|noun
+accurate|chính xác|adjective
+achieve|đạt được|verb
+achievement|thành tựu|noun
+acknowledge|công nhận, thừa nhận|verb
+acquire|đạt được, thu nhận|verb
+adapt|thích nghi|verb
+additional|bổ sung|adjective
+adequate|đầy đủ, thích đáng|adjective
+adjust|điều chỉnh|verb
+administration|sự quản lý|noun
+admire|ngưỡng mộ|verb
+admit|thừa nhận, cho phép vào|verb
+adopt|áp dụng, nhận nuôi|verb
+advance|tiến bộ, thúc đẩy|noun
+advantage|lợi thế|noun
+adventure|cuộc phiêu lưu|noun
+advertise|quảng cáo|verb
+advertisement|quảng cáo|noun
+advice|lời khuyên|noun
+affair|vấn đề, sự việc|noun
+affect|ảnh hưởng|verb
+afford|có đủ khả năng chi trả|verb
+agency|cơ quan, đại lý|noun
+agenda|chương trình nghị sự|noun
+aggressive|hung hăng, quyết liệt|adjective
+agriculture|nông nghiệp|noun
+aid|sự trợ giúp|noun
+aim|mục tiêu, nhắm đến|noun
+alter|thay đổi|verb
+alternative|lựa chọn thay thế|noun
+ambition|tham vọng|noun
+analyze|phân tích|verb
+analysis|sự phân tích|noun
+ancient|cổ đại|adjective
+annual|hằng năm|adjective
+anxiety|sự lo lắng|noun
+anxious|lo âu|adjective
+apparent|rõ ràng, có vẻ|adjective
+appeal|sự hấp dẫn, kháng cáo|noun
+approach|cách tiếp cận|noun
+appropriate|phù hợp|adjective
+approval|sự chấp thuận|noun
+approve|chấp thuận|verb
+arise|phát sinh|verb
+arrange|sắp xếp|verb
+arrangement|sự sắp xếp|noun
+aspect|khía cạnh|noun
+assess|đánh giá|verb
+assessment|sự đánh giá|noun
+assign|giao nhiệm vụ|verb
+assignment|bài tập, nhiệm vụ|noun
+assist|hỗ trợ|verb
+assistance|sự hỗ trợ|noun
+assume|cho rằng, đảm nhận|verb
+assumption|giả định|noun
+attempt|cố gắng, nỗ lực|noun
+attitude|thái độ|noun
+attract|thu hút|verb
+attraction|sự thu hút|noun
+authority|thẩm quyền|noun
+available|có sẵn|adjective
+aware|nhận thức được|adjective
+awareness|sự nhận thức|noun
+balance|sự cân bằng|noun
+barrier|rào cản|noun
+benefit|lợi ích|noun
+beneficial|có lợi|adjective
+belief|niềm tin|noun
+belong|thuộc về|verb
+bias|thiên kiến|noun
+brief|ngắn gọn|adjective
+budget|ngân sách|noun
+capable|có năng lực|adjective
+capacity|khả năng, sức chứa|noun
+career|sự nghiệp|noun
+category|danh mục, loại|noun
+challenge|thử thách|noun
+circumstance|hoàn cảnh|noun
+claim|tuyên bố, yêu cầu|verb
+clarify|làm rõ|verb
+client|khách hàng|noun
+colleague|đồng nghiệp|noun
+combine|kết hợp|verb
+comment|bình luận|noun
+commit|cam kết, phạm phải|verb
+commitment|sự cam kết|noun
+communicate|giao tiếp|verb
+communication|sự giao tiếp|noun
+community|cộng đồng|noun
+compare|so sánh|verb
+comparison|sự so sánh|noun
+compete|cạnh tranh|verb
+competition|cuộc cạnh tranh|noun
+competitive|có tính cạnh tranh|adjective
+complex|phức tạp|adjective
+complicated|rắc rối|adjective
+component|thành phần|noun
+concentrate|tập trung|verb
+concentration|sự tập trung|noun
+concept|khái niệm|noun
+concern|mối quan tâm|noun
+concerned|lo lắng, quan tâm|adjective
+conduct|tiến hành|verb
+confidence|sự tự tin|noun
+confident|tự tin|adjective
+conflict|xung đột|noun
+consequence|hậu quả|noun
+consider|cân nhắc|verb
+considerable|đáng kể|adjective
+consideration|sự cân nhắc|noun
+consistent|nhất quán|adjective
+constant|liên tục, không đổi|adjective
+construct|xây dựng|verb
+construction|sự xây dựng|noun
+consume|tiêu thụ|verb
+consumer|người tiêu dùng|noun
+consumption|sự tiêu thụ|noun
+contact|liên hệ|noun
+contemporary|đương đại|adjective
+context|bối cảnh|noun
+contract|hợp đồng|noun
+contribute|đóng góp|verb
+contribution|sự đóng góp|noun
+convenient|thuận tiện|adjective
+convince|thuyết phục|verb
+convincing|có sức thuyết phục|adjective
+cooperation|sự hợp tác|noun
+coordinate|phối hợp|verb
+core|cốt lõi|noun
+corporate|thuộc doanh nghiệp|adjective
+create|tạo ra|verb
+creative|sáng tạo|adjective
+creation|sự sáng tạo|noun
+criterion|tiêu chí|noun
+critical|quan trọng, mang tính phê phán|adjective
+criticism|sự phê bình|noun
+crucial|then chốt|adjective
+culture|văn hóa|noun
+currency|tiền tệ|noun
+current|hiện tại|adjective
+data|dữ liệu|noun
+debate|tranh luận|noun
+decade|thập kỷ|noun
+decline|suy giảm, từ chối|verb
+define|định nghĩa|verb
+definition|định nghĩa|noun
+demonstrate|chứng minh, thể hiện|verb
+demand|nhu cầu, yêu cầu|noun
+demonstration|sự minh họa|noun
+deny|phủ nhận|verb
+depend|phụ thuộc|verb
+dependent|phụ thuộc|adjective
+derive|bắt nguồn|verb
+design|thiết kế|noun
+desire|mong muốn|noun
+despite|mặc dù|preposition
+detect|phát hiện|verb
+determine|xác định|verb
+development|sự phát triển|noun
+device|thiết bị|noun
+devote|cống hiến|verb
+digital|kỹ thuật số|adjective
+dimension|khía cạnh, kích thước|noun
+disadvantage|bất lợi|noun
+disaster|thảm họa|noun
+discipline|kỷ luật, ngành học|noun
+discount|giảm giá|noun
+discrimination|sự phân biệt đối xử|noun
+display|trưng bày, hiển thị|verb
+distinct|khác biệt rõ ràng|adjective
+distinguish|phân biệt|verb
+distribute|phân phối|verb
+distribution|sự phân phối|noun
+diverse|đa dạng|adjective
+diversity|sự đa dạng|noun
+document|tài liệu|noun
+domestic|trong nước, thuộc gia đình|adjective
+dominant|chiếm ưu thế|adjective
+economic|thuộc kinh tế|adjective
+economy|nền kinh tế|noun
+effective|hiệu quả|adjective
+efficient|hiệu suất cao|adjective
+emerge|xuất hiện|verb
+emphasis|sự nhấn mạnh|noun
+emphasize|nhấn mạnh|verb
+enable|cho phép, tạo điều kiện|verb
+encounter|gặp phải|verb
+engage|tham gia, thu hút|verb
+engagement|sự tham gia|noun
+enhance|nâng cao|verb
+ensure|đảm bảo|verb
+environment|môi trường|noun
+environmental|thuộc môi trường|adjective
+establish|thiết lập|verb
+estimate|ước tính|verb
+evaluation|sự đánh giá|noun
+evidence|bằng chứng|noun
+evident|rõ ràng|adjective
+evolve|phát triển, tiến hóa|verb
+exceed|vượt quá|verb
+exception|ngoại lệ|noun
+exchange|trao đổi|noun
+exclude|loại trừ|verb
+exhibit|trưng bày, thể hiện|verb
+expand|mở rộng|verb
+expansion|sự mở rộng|noun
+expectation|sự kỳ vọng|noun
+expense|chi phí|noun
+expert|chuyên gia|noun
+expertise|chuyên môn|noun
+explore|khám phá|verb
+expose|phơi bày, tiếp xúc|verb
+exposure|sự tiếp xúc|noun
+external|bên ngoài|adjective
+factor|yếu tố|noun
+feature|đặc điểm|noun
+finance|tài chính|noun
+financial|thuộc tài chính|adjective
+flexible|linh hoạt|adjective
+focus|tập trung|noun
+forecast|dự báo|noun
+former|trước đây|adjective
+framework|khuôn khổ|noun
+function|chức năng|noun
+fundamental|cơ bản, nền tảng|adjective
+funding|nguồn tài trợ|noun
+generate|tạo ra|verb
+generation|thế hệ|noun
+global|toàn cầu|adjective
+goal|mục tiêu|noun
+grant|khoản trợ cấp, cấp|noun
+guarantee|đảm bảo|verb
+guideline|hướng dẫn|noun
+highlight|làm nổi bật|verb
+hypothesis|giả thuyết|noun
+identify|xác định, nhận diện|verb
+identity|bản sắc, danh tính|noun
+illustrate|minh họa|verb
+image|hình ảnh|noun
+impact|tác động|noun
+implement|thực hiện|verb
+implementation|sự thực hiện|noun
+implication|hệ quả, hàm ý|noun
+imply|ngụ ý|verb
+impose|áp đặt|verb
+incentive|động lực, khuyến khích|noun
+income|thu nhập|noun
+increase|tăng|verb
+indicate|chỉ ra|verb
+indication|dấu hiệu|noun
+individual|cá nhân|noun
+industrial|thuộc công nghiệp|adjective
+industry|ngành công nghiệp|noun
+inevitable|không thể tránh khỏi|adjective
+influence|ảnh hưởng|noun
+initial|ban đầu|adjective
+initiative|sáng kiến|noun
+innovation|sự đổi mới|noun
+innovative|đổi mới, sáng tạo|adjective
+input|đầu vào, ý kiến đóng góp|noun
+insight|sự hiểu biết sâu sắc|noun
+inspect|kiểm tra|verb
+inspection|sự kiểm tra|noun
+instance|trường hợp|noun
+institute|viện, thành lập|noun
+institution|tổ chức, cơ sở|noun
+instruction|hướng dẫn|noun
+integrate|tích hợp|verb
+integration|sự tích hợp|noun
+intellectual|thuộc trí tuệ|adjective
+intelligence|trí thông minh|noun
+intense|mãnh liệt|adjective
+intention|ý định|noun
+interaction|sự tương tác|noun
+interpret|diễn giải|verb
+interpretation|sự diễn giải|noun
+interval|khoảng thời gian|noun
+intervene|can thiệp|verb
+intervention|sự can thiệp|noun
+investigate|điều tra|verb
+investigation|cuộc điều tra|noun
+investment|sự đầu tư|noun
+investor|nhà đầu tư|noun
+involve|liên quan, bao gồm|verb
+issue|vấn đề|noun
+justify|biện minh, chứng minh hợp lý|verb
+justification|sự biện minh|noun
+labour|lao động|noun
+legal|hợp pháp, thuộc pháp luật|adjective
+legislation|luật pháp|noun
+majority|đa số|noun
+maintain|duy trì|verb
+maintenance|sự bảo trì|noun
+management|sự quản lý|noun
+manager|người quản lý|noun
+manifest|biểu hiện rõ|verb
+manipulate|thao túng, điều khiển|verb
+method|phương pháp|noun
+methodology|phương pháp luận|noun
+minority|thiểu số|noun
+monitor|theo dõi|verb
+motivate|tạo động lực|verb
+motivation|động lực|noun
+mutual|lẫn nhau|adjective
+negative|tiêu cực|adjective
+negotiate|đàm phán|verb
+negotiation|cuộc đàm phán|noun
+network|mạng lưới|noun
+nevertheless|tuy nhiên|adverb
+objective|mục tiêu, khách quan|noun
+obtain|đạt được|verb
+obvious|hiển nhiên|adjective
+occasion|dịp, cơ hội|noun
+occupy|chiếm giữ|verb
+occur|xảy ra|verb
+occurrence|sự việc xảy ra|noun
+option|lựa chọn|noun
+outcome|kết quả|noun
+output|đầu ra, sản lượng|noun
+overall|tổng thể|adjective
+overcome|vượt qua|verb
+participate|tham gia|verb
+participation|sự tham gia|noun
+particular|cụ thể, đặc biệt|adjective
+particularly|đặc biệt là|adverb
+perceive|nhận thức|verb
+perception|nhận thức|noun
+perspective|góc nhìn|noun
+phenomenon|hiện tượng|noun
+policy|chính sách|noun
+positive|tích cực|adjective
+potential|tiềm năng|noun
+potentially|có khả năng|adverb
+practical|thực tế|adjective
+practice|thực hành|noun
+precise|chính xác|adjective
+predict|dự đoán|verb
+prediction|sự dự đoán|noun
+principle|nguyên tắc|noun
+priority|ưu tiên|noun
+procedure|quy trình|noun
+proceed|tiếp tục, tiến hành|verb
+process|quá trình|noun
+professional|chuyên nghiệp|adjective
+profession|nghề nghiệp|noun
+prohibit|cấm|verb
+project|dự án|noun
+promote|thúc đẩy, quảng bá|verb
+promotion|sự thăng tiến, quảng bá|noun
+proportion|tỷ lệ|noun
+prospect|triển vọng|noun
+psychological|thuộc tâm lý|adjective
+purchase|mua hàng|verb
+purchase|việc mua hàng|noun
+pursue|theo đuổi|verb
+range|phạm vi|noun
+ratio|tỷ lệ|noun
+react|phản ứng|verb
+reaction|phản ứng|noun
+recover|phục hồi|verb
+recovery|sự phục hồi|noun
+reduce|giảm|verb
+reduction|sự giảm|noun
+regulate|điều chỉnh, quản lý|verb
+regulation|quy định|noun
+relevant|liên quan|adjective
+reliable|đáng tin cậy|adjective
+rely|dựa vào|verb
+remove|loại bỏ|verb
+require|yêu cầu|verb
+requirement|yêu cầu|noun
+research|nghiên cứu|noun
+researcher|nhà nghiên cứu|noun
+resolve|giải quyết|verb
+resolution|giải pháp, nghị quyết|noun
+resource|tài nguyên, nguồn lực|noun
+respond|phản hồi|verb
+response|phản hồi|noun
+responsibility|trách nhiệm|noun
+restrict|hạn chế|verb
+restriction|sự hạn chế|noun
+retain|giữ lại|verb
+reveal|tiết lộ|verb
+revenue|doanh thu|noun
+review|đánh giá, xem xét|noun
+revise|chỉnh sửa, ôn tập|verb
+revision|sự chỉnh sửa, ôn tập|noun
+role|vai trò|noun
+route|lộ trình|noun
+scenario|kịch bản, tình huống|noun
+schedule|lịch trình|noun
+scheme|kế hoạch, chương trình|noun
+scope|phạm vi|noun
+section|phần, mục|noun
+sector|lĩnh vực|noun
+secure|bảo đảm, an toàn|adjective
+seek|tìm kiếm|verb
+select|lựa chọn|verb
+selection|sự lựa chọn|noun
+sequence|trình tự|noun
+series|chuỗi|noun
+shift|sự thay đổi, chuyển dịch|noun
+significant|đáng kể, quan trọng|adjective
+significantly|đáng kể|adverb
+similarity|sự tương đồng|noun
+source|nguồn|noun
+specific|cụ thể|adjective
+specifically|cụ thể là|adverb
+specify|nêu rõ|verb
+strategy|chiến lược|noun
+strategic|mang tính chiến lược|adjective
+structure|cấu trúc|noun
+submit|nộp, trình|verb
+submission|sự đệ trình|noun
+subsequent|tiếp theo|adjective
+subsequently|sau đó|adverb
+substantial|đáng kể, lớn|adjective
+substantially|đáng kể|adverb
+substitute|thay thế|verb
+sufficient|đủ|adjective
+sufficiently|đầy đủ|adverb
+summary|bản tóm tắt|noun
+summarize|tóm tắt|verb
+survey|khảo sát|noun
+survive|sống sót|verb
+survival|sự sống còn|noun
+sustainable|bền vững|adjective
+sustainability|tính bền vững|noun
+target|mục tiêu|noun
+task|nhiệm vụ|noun
+technical|thuộc kỹ thuật|adjective
+technique|kỹ thuật|noun
+technology|công nghệ|noun
+temporary|tạm thời|adjective
+tendency|xu hướng|noun
+theory|lý thuyết|noun
+therefore|do đó|adverb
+threat|mối đe dọa|noun
+threaten|đe dọa|verb
+tradition|truyền thống|noun
+traditional|truyền thống|adjective
+transfer|chuyển giao|verb
+transform|chuyển đổi|verb
+transformation|sự chuyển đổi|noun
+transition|sự chuyển tiếp|noun
+trend|xu hướng|noun
+ultimate|cuối cùng, tối hậu|adjective
+ultimately|cuối cùng|adverb
+undergo|trải qua|verb
+undertake|đảm nhận|verb
+uniform|đồng nhất|adjective
+unique|độc đáo|adjective
+utilize|sử dụng|verb
+valid|hợp lệ|adjective
+validity|tính hợp lệ|noun
+vary|thay đổi|verb
+variation|sự biến đổi|noun
+variety|sự đa dạng|noun
+various|nhiều loại|adjective
+vehicle|phương tiện|noun
+version|phiên bản|noun
+via|thông qua|preposition
+victory|chiến thắng|noun
+visible|có thể nhìn thấy|adjective
+vision|tầm nhìn|noun
+visual|thuộc thị giác|adjective
+volume|khối lượng, âm lượng|noun
+welfare|phúc lợi|noun
+whereas|trong khi|conjunction
+widespread|phổ biến rộng rãi|adjective
+willing|sẵn lòng|adjective
+withdraw|rút lui, rút tiền|verb
+withdrawal|sự rút lui|noun
+witness|chứng kiến, nhân chứng|verb
+workforce|lực lượng lao động|noun
+workplace|nơi làm việc|noun
+worthwhile|đáng công, đáng giá|adjective
+yield|mang lại, sản lượng|verb
+`;
+
+const BANK = RAW.trim().split("\n").map((line, i) => {
+  const [word, meaning, pos] = line.split("|");
+  return { id:i, word:word.trim(), meaning:meaning.trim(), pos:pos.trim() };
+}).filter(x => x.word && x.meaning);
+
+const KEY = "tanEnglishDailyV2";
+const old = JSON.parse(localStorage.getItem(KEY) || "{}");
+const state = {
+  learned: old.learned || [],
+  saved: old.saved || [],
+  customExamples: old.customExamples || {}
+};
+
+function persist() {
+  localStorage.setItem(KEY, JSON.stringify(state));
+  updateStats();
+}
+
+function dayIndex() {
+  const now = new Date();
+  const start = new Date(now.getFullYear(), 0, 0);
+  const day = Math.floor((now - start) / 86400000);
+  return (day - 1) % BANK.length;
+}
+
+function currentWord() {
+  return BANK[dayIndex()];
+}
+
+function speak(word) {
+  if (!("speechSynthesis" in window)) {
+    alert("Trình duyệt này chưa hỗ trợ phát âm tự động.");
+    return;
+  }
+  speechSynthesis.cancel();
+  const utterance = new SpeechSynthesisUtterance(word);
+  utterance.lang = "en-US";
+  utterance.rate = 0.85;
+  const voices = speechSynthesis.getVoices();
+  const usVoice = voices.find(v =>
+    v.lang.toLowerCase() === "en-us" ||
+    v.lang.toLowerCase().startsWith("en-us")
+  );
+  if (usVoice) utterance.voice = usVoice;
+  speechSynthesis.speak(utterance);
+}
+
+async function loadDictionary(word) {
+  const ipa = document.getElementById("ipa");
+  const example = document.getElementById("example");
+  const exampleVi = document.getElementById("exampleVi");
+  const status = document.getElementById("dictionaryStatus");
+  ipa.textContent = "Đang tải IPA...";
+  example.textContent = "Đang tải câu ví dụ...";
+  exampleVi.textContent = "";
+  status.textContent = "IPA và ví dụ được lấy từ từ điển trực tuyến; cần có Internet.";
+
+  try {
+    const response = await fetch(
+      "https://api.dictionaryapi.dev/api/v2/entries/en/" +
+      encodeURIComponent(word.word)
+    );
+    if (!response.ok) throw new Error("Dictionary unavailable");
+    const data = await response.json();
+    const entry = data[0] || {};
+    const phonetic = entry.phonetics?.find(p => p.text)?.text ||
+                     entry.phonetic || "";
+    ipa.textContent = phonetic ? `IPA: ${phonetic} · US English` :
+                                 "IPA chưa có trong nguồn từ điển.";
+    const meanings = entry.meanings || [];
+    let foundExample = "";
+    for (const m of meanings) {
+      for (const d of (m.definitions || [])) {
+        if (d.example) { foundExample = d.example; break; }
+      }
+      if (foundExample) break;
+    }
+    example.textContent = foundExample ||
+      `Try to use “${word.word}” in a sentence of your own.`;
+    exampleVi.textContent = foundExample
+      ? "Bạn hãy đọc câu ví dụ và thử dịch sang tiếng Việt."
+      : "Hãy tự đặt một câu với từ này để luyện tập.";
+    status.textContent = "Nguồn tra cứu: Free Dictionary API.";
+  } catch (e) {
+    ipa.textContent = "Chưa tải được IPA — hãy thử lại khi có Internet.";
+    example.textContent =
+      `Practice using “${word.word}” in a sentence related to your daily life.`;
+    exampleVi.textContent =
+      "Hãy đặt một câu liên quan đến công việc hoặc cuộc sống của bạn.";
+    status.textContent = "Không kết nối được từ điển. Bạn vẫn có thể học nghĩa và nghe phát âm.";
+  }
+}
+
+function renderToday() {
+  const w = currentWord();
+  document.getElementById("dayLabel").textContent =
+    "TỪ VỰNG HÔM NAY · NGÀY " + (dayIndex() + 1);
+  document.getElementById("word").textContent = w.word;
+  document.getElementById("meaning").textContent = w.meaning;
+  document.getElementById("pos").textContent =
+    "Loại từ: " + w.pos + " · Mục tiêu: B2";
+  document.getElementById("learnBtn").textContent =
+    state.learned.includes(w.id) ? "✓ Đã học" : "✓ Đánh dấu đã học";
+  document.getElementById("learnBtn").classList.toggle(
+    "success", state.learned.includes(w.id)
+  );
+  document.getElementById("saveBtn").textContent =
+    state.saved.includes(w.id) ? "★ Đã lưu ôn tập" : "☆ Lưu ôn tập";
+  loadDictionary(w.word);
+}
+
+function updateStats() {
+  document.getElementById("learnedCount").textContent = state.learned.length;
+  document.getElementById("savedCount").textContent = state.saved.length;
+  document.getElementById("totalCount").textContent = BANK.length;
+  const pct = BANK.length ? state.learned.length / BANK.length * 100 : 0;
+  document.getElementById("progressBar").style.width = pct + "%";
+  document.getElementById("progressText").textContent =
+    `Bạn đã hoàn thành ${Math.round(pct)}% kho từ vựng.`;
+}
+
+let visibleCount = 30;
+
+function renderList() {
+  const query = document.getElementById("search").value.trim().toLowerCase();
+  const filter = document.getElementById("filter").value;
+  let items = BANK.filter(w => {
+    const match = w.word.toLowerCase().includes(query) ||
+                  w.meaning.toLowerCase().includes(query);
+    const learned = state.learned.includes(w.id);
+    const saved = state.saved.includes(w.id);
+    return match &&
+      (filter === "all" ||
+       (filter === "learned" && learned) ||
+       (filter === "unlearned" && !learned) ||
+       (filter === "saved" && saved));
+  });
+
+  const list = document.getElementById("wordList");
+  list.innerHTML = "";
+  const shown = items.slice(0, visibleCount);
+
+  for (const w of shown) {
+    const item = document.createElement("div");
+    item.className = "item";
+
+    const main = document.createElement("div");
+    main.className = "item-main";
+    const title = document.createElement("div");
+    title.className = "item-word";
+    title.textContent = w.word + (state.learned.includes(w.id) ? " ✓" : "");
+    const meaning = document.createElement("div");
+    meaning.className = "item-meaning";
+    meaning.textContent = w.meaning + " · " + w.pos;
+    main.append(title, meaning);
+
+    const actions = document.createElement("div");
+    actions.className = "item-actions";
+
+    const listen = document.createElement("button");
+    listen.className = "small";
+    listen.textContent = "🔊";
+    listen.title = "Nghe phát âm";
+    listen.onclick = () => speak(w.word);
+
+    const save = document.createElement("button");
+    save.className = "small";
+    save.textContent = state.saved.includes(w.id) ? "★" : "☆";
+    save.title = "Lưu hoặc bỏ lưu";
+    save.onclick = () => {
+      state.saved = state.saved.includes(w.id)
+        ? state.saved.filter(id => id !== w.id)
+        : [...state.saved, w.id];
+      persist();
+      renderList();
+      renderToday();
+    };
+
+    const learn = document.createElement("button");
+    learn.className = "small";
+    learn.textContent = state.learned.includes(w.id) ? "✓" : "Học";
+    learn.onclick = () => {
+      state.learned = state.learned.includes(w.id)
+        ? state.learned.filter(id => id !== w.id)
+        : [...state.learned, w.id];
+      persist();
+      renderList();
+      renderToday();
+    };
+
+    actions.append(listen, save, learn);
+    item.append(main, actions);
+    list.appendChild(item);
+  }
+
+  document.getElementById("moreBtn").classList.toggle(
+    "hidden", shown.length >= items.length
+  );
+  if (!items.length) {
+    list.textContent = "Không tìm thấy từ phù hợp.";
+  }
+}
+
+document.getElementById("learnBtn").onclick = () => {
+  const id = currentWord().id;
+  state.learned = state.learned.includes(id)
+    ? state.learned.filter(x => x !== id)
+    : [...state.learned, id];
+  persist();
+  renderToday();
+  renderList();
+};
+
+document.getElementById("saveBtn").onclick = () => {
+  const id = currentWord().id;
+  state.saved = state.saved.includes(id)
+    ? state.saved.filter(x => x !== id)
+    : [...state.saved, id];
+  persist();
+  renderToday();
+  renderList();
+};
+
+document.getElementById("speakBtn").onclick = () => speak(currentWord().word);
+document.getElementById("search").addEventListener("input", () => {
+  visibleCount = 30;
+  renderList();
+});
+document.getElementById("filter").addEventListener("change", () => {
+  visibleCount = 30;
+  renderList();
+});
+document.getElementById("moreBtn").onclick = () => {
+  visibleCount += 30;
+  renderList();
+};
+
+document.getElementById("exportBtn").onclick = () => {
+  const blob = new Blob([JSON.stringify(state, null, 2)], {
+    type: "application/json"
+  });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "tan-english-backup.json";
+  a.click();
+  URL.revokeObjectURL(url);
+};
+
+document.getElementById("importBtn").onclick = () =>
+  document.getElementById("importFile").click();
+
+document.getElementById("importFile").onchange = async e => {
+  const file = e.target.files[0];
+  if (!file) return;
+  try {
+    const imported = JSON.parse(await file.text());
+    state.learned = Array.isArray(imported.learned) ? imported.learned : [];
+    state.saved = Array.isArray(imported.saved) ? imported.saved : [];
+    state.customExamples = imported.customExamples || {};
+    persist();
+    renderToday();
+    renderList();
+    alert("Đã nhập bản sao lưu.");
+  } catch {
+    alert("File sao lưu không hợp lệ.");
+  }
+};
+
+renderToday();
+updateStats();
+renderList();
+</script>
+</body>
+</html>
